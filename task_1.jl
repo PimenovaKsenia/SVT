@@ -1,11 +1,7 @@
 using Plots
 
-# ============================================================
-# Точное решение и его вторая производная
-# ============================================================
+# Точное решение
 u_exact(x) = sin(4x) * cos(3x)
-
-# Вторая производная вычислена аналитически:
 # u'' = -25*sin(4x)*cos(3x) - 24*cos(4x)*sin(3x)
 function u_exact_deriv2(x)
     return -25 * sin(4x) * cos(3x) - 24 * cos(4x) * sin(3x)
@@ -14,9 +10,7 @@ end
 # Правая часть f(x) = -u''(x)
 f(x) = -u_exact_deriv2(x)
 
-# ============================================================
 # Метод прогонки 
-# ============================================================
 function progon_method(a, b, c, d)
     n = length(d)
     cp = zeros(n)
@@ -40,11 +34,8 @@ function progon_method(a, b, c, d)
     return y
 end
 
-# ============================================================
 # Решение задачи для заданного N
-# Возвращает: x (узлы), y (численное решение),
-#             err_max (C-норма), err_l2 (дискретная L2-норма)
-# ============================================================
+# Возвращает: x (узлы), y (численное решение), err_max (C-норма), err_l2 (дискретная L2-норма)
 function solve_poisson(N)
     h = 1.0 / N
     x = LinRange(0.0, 1.0, N+1)        # все узлы, включая границы
@@ -53,7 +44,7 @@ function solve_poisson(N)
 
     n = N - 1                           # количество внутренних узлов
     a = zeros(n)                        # поддиагональ
-    b = zeros(n)                        # главная диагональ
+    b = zeros(n)                        # гл. диагональ
     c = zeros(n)                        # наддиагональ
     d = zeros(n)                        # правая часть
 
@@ -90,11 +81,8 @@ function solve_poisson(N)
     return x, y, err_max, err_l2
 end
 
-# ============================================================
 # Основная программа
-# ============================================================
 function main()
-    # Список N (степени двойки)
     N_list = [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
     hs = Float64[]
     err_max_vals = Float64[]
@@ -112,7 +100,7 @@ function main()
         println("$N\t\t$h\t$err_max\t$err_l2")
     end
 
-    # ========== 1. График сравнения решений для N = 16 ==========
+    # График сравнения решений для N = 16
     N_comp = 16
     x_comp, y_comp, _, _ = solve_poisson(N_comp)
     u_ex_comp = u_exact.(x_comp)
@@ -122,7 +110,7 @@ function main()
     plot!(x_comp, y_comp, label="Numerical", linestyle=:dash, linewidth=2)
     savefig("comparison.pdf")
 
-    # ========== 2. Графики сходимости в логарифмическом масштабе ==========
+    # Графики сходимости в логарифмическом масштабе
     p2 = plot(hs, err_max_vals, marker=:circle, xscale=:log10, yscale=:log10,
               label="C-norm error", xlabel="h", ylabel="error", title="Convergence")
     plot!(hs, hs.^2, linestyle=:dash, label="O(h^2)")
@@ -131,12 +119,9 @@ function main()
               label="L2-norm error", xlabel="h", ylabel="error", title="Convergence")
     plot!(hs, hs.^2, linestyle=:dash, label="O(h^2)")
 
-    # Объединение двух графиков в один
     p_all = plot(p2, p3, layout=(1,2), size=(900,400))
     savefig("convergence.pdf")
 
-    # Отображение в REPL (если запущено интерактивно)
-    display(p_all)
     println("\nГрафики сохранены: comparison.pdf, convergence.pdf")
 end
 
