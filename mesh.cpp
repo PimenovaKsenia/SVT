@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     }
     
     // Координаты точки сгущения
-    double x0 = 242.0;
-    double y0 = 95.0;
+    double x0 = 71.0;
+    double y0 = 180.0;
     double z0 = 0.0;
 
     // Загрузка сетки
